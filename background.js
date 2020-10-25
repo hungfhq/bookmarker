@@ -32,35 +32,3 @@ chrome.tabs.onActivated.addListener((tab) => {
     });
   });
 });
-
-
-// chrome.tabs.query({ active: true, lastFocusedWindow: true }, function(tabs) {
-//   const tab = tabs[0];
-//   console.log(tabs);
-//   chrome.extension.onConnect.addListener(function(port) {
-//     port.postMessage(tab.url);
-//   })
-// });
-
-
-
-// chrome.browserAction.onClicked.addListener(buttonClicked);
-
-// function buttonClicked(tab) {
-//   console.log('onClicked');
-//   chrome.tabs.get(tab.tabId, currentTab => {
-//     console.log(currentTab.url);
-//   });
-// }
-
-// chrome.extension.onConnect.addListener(function(port) {
-//   console.log("Connected .....");
-//   port.onMessage.addListener(function(msg) {
-//        console.log("message recieved: " + msg);
-//        port.postMessage("hi popup");
-//   });
-// })
-
-
-
-

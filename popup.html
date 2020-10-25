@@ -10,6 +10,12 @@
       word-wrap: break-word;
     }
 
+
+    #siteImg {
+      margin-top: 20px;
+      width: 20px;
+    }
+
     #spinner {
       display: none;
     }
@@ -67,20 +73,26 @@
         <a id="createCategoryBtn" class="waves-effect waves-light prefix"><i class="material-icons">add</i></a>
     </div>
 
-    <div class="col s12">
-      <div id="categoriesSelectSection" class="section">
+    <div class="section col s12">
+      <div id="categoriesSelectSection">
         <select id="categoriesSelect" >
           <option value="unsorted" disable selected>unsorted</option>
         </select>
       </div>
-      <div class="section">
-        <span id="url" class="flow-text blue-text text-darken-2"></span>
-      </div>
+    </div>
+    <div class="col s12"><h5></h5></div>
 
+    <div class="col s2">
+      <img id="siteImg">
+    </div>
+
+    <div class="col s10">
+      <h6 id="title"></h6>
     </div>
       
-    <div class="col s12"><div class="divider"></div></div>
-    <div class="col s12"><h5></h5></div>
+    <div class="col s12">
+      <input id="url" type="text" class="top blue-text text-darken-2">
+    </div>
     
     <div class="col s12">
       <div class="right">
