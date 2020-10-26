@@ -1,117 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Bookmarker</title>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bookmarker</title>
 
-  <style>
-    body {
-      width: 300px;
-      word-wrap: break-word;
-    }
+    <style>
+      body {
+        width: 300px;
+        word-wrap: break-word;
+      }
 
+      #siteImg {
+        margin-top: 20px;
+        width: 20px;
+      }
 
-    #siteImg {
-      margin-top: 20px;
-      width: 20px;
-    }
+      #spinner {
+        display: none;
+      }
 
-    #spinner {
-      display: none;
-    }
+      #notification {
+        display: none;
+      }
 
-    #notification {
-      display: none;
-    }
+      ul#collections li {
+        display: inline-block;
+        width: 50%;
+      }
 
-    .hidden {
-      display: none !important;
-    }
+      .hidden {
+        display: none !important;
+      }
 
-    .show {
-      display: block !important;
-    }
+      .show {
+        display: block !important;
+      }
 
-  .spinner-small {
-    width: 20px !important;
-    height: 20px !important;
-  }
-  </style>
+      .spinner-small {
+        width: 20px !important;
+        height: 20px !important;
+      }
+    </style>
 
-  <!-- Compiled and minified CSS -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Compiled and minified CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
 
-  <!-- Compiled and minified JavaScript -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-          
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-  <!-- The core Firebase JS SDK is always required and must be listed first -->
-<script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-firestore.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-firestore.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
 
-
-<script src="popup.js" defer></script>
-</head>
-<body>
-  <div class="row">
-    <div id="createCategoryField" class="input-field col s11">
-        <input id="categoryText" type="text" class="validate">
+    <script src="popup.js" defer></script>
+  </head>
+  <body>
+    <div class="row">
+      <div id="createCategoryField" class="input-field col s11">
+        <input id="categoryText" type="text" />
         <label for="categoryText">Add new category</label>
-        <div id="spinnerSmall" class="preloader-wrapper spinner-small active prefix hidden">
+        <div
+          id="spinnerSmall"
+          class="preloader-wrapper spinner-small active prefix hidden"
+        >
           <div class="spinner-layer spinner-green-only">
             <div class="circle-clipper left">
               <div class="circle"></div>
-            </div><div class="gap-patch">
+            </div>
+            <div class="gap-patch">
               <div class="circle"></div>
-            </div><div class="circle-clipper right">
+            </div>
+            <div class="circle-clipper right">
               <div class="circle"></div>
             </div>
           </div>
         </div>
-        <a id="createCategoryBtn" class="waves-effect waves-light prefix"><i class="material-icons">add</i></a>
-    </div>
-
-    <div class="section col s12">
-      <div id="categoriesSelectSection">
-        <select id="categoriesSelect" >
-          <option value="unsorted" disable selected>unsorted</option>
-        </select>
+        <a id="createCategoryBtn" class="waves-effect waves-light prefix"
+          ><i class="material-icons">add</i></a
+        >
       </div>
-    </div>
-    <div class="col s12"><h5></h5></div>
 
-    <div class="col s2">
-      <img id="siteImg">
-    </div>
+      <div class="col s12">
+        <ul id="collections"></ul>
+      </div>
 
-    <div class="col s10">
-      <h6 id="title"></h6>
-    </div>
-      
-    <div class="col s12">
-      <input id="url" type="text" class="top blue-text text-darken-2">
-    </div>
-    
-    <div class="col s12">
-      <div class="right">
-        <a id="saveBtn" class="waves-effect waves-light btn"><i class="material-icons left">cloud</i>Save</a>
-        <div id="notification"><i class="material-icons left green-text text-darken-2">check</i></div>
-        <div id="spinner" class="preloader-wrapper small active">
-          <div class="spinner-layer spinner-green-only">
-            <div class="circle-clipper left">
-              <div class="circle"></div>
-            </div><div class="gap-patch">
-              <div class="circle"></div>
-            </div><div class="circle-clipper right">
-              <div class="circle"></div>
+      <div class="section col s12 divider"></div>
+
+      <div class="col s2">
+        <img id="siteImg" />
+      </div>
+
+      <div class="col s10">
+        <h6 id="title"></h6>
+      </div>
+
+      <div class="col s12">
+        <input id="url" type="text" class="top blue-text text-darken-2" />
+      </div>
+
+      <div class="col s12">
+        <div class="right">
+          <a id="saveBtn" class="waves-effect waves-light btn"
+            ><i class="material-icons left">cloud</i>Save</a
+          >
+          <div id="notification">
+            <i class="material-icons left green-text text-darken-2">check</i>
+          </div>
+          <div id="spinner" class="preloader-wrapper small active">
+            <div class="spinner-layer spinner-green-only">
+              <div class="circle-clipper left">
+                <div class="circle"></div>
+              </div>
+              <div class="gap-patch">
+                <div class="circle"></div>
+              </div>
+              <div class="circle-clipper right">
+                <div class="circle"></div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-
     </div>
-  </div>
-</body>
+  </body>
 </html>
