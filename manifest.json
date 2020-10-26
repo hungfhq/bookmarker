@@ -3,7 +3,7 @@
   "name": "Bookmarker",
   "version": "0.001",
   "permissions": [
-    "activeTab", "tabs", "webNavigation"
+    "activeTab", "tabs", "storage"
   ],
   "content_scripts": [
     {
@@ -17,7 +17,7 @@
   },
   "browser_action": {
     "default_icon": {
-      "16": "16x16.png"
+      "16": "false.png"
     },
     "default_popup": "popup.html"
   }

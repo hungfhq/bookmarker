@@ -24,11 +24,13 @@ async function loadAllCategories() {
   }
 
   const snapshot = await db.collection("collections").get();
-  snapshot.docs.map((doc) => {
-    // console.log(doc.id);
-    liIds.push(doc.id);
-    addChildToCategoryList(doc);
-  });
+  snapshot.docs
+    .filter((item) => item.data().name !== "cached")
+    .map((doc) => {
+      // console.log(doc.id);
+      liIds.push(doc.id);
+      addChildToCategoryList(doc);
+    });
 }
 
 function addChildToCategoryList(doc) {
@@ -37,8 +39,12 @@ function addChildToCategoryList(doc) {
   if (doc.data().name === "unsorted") {
     li.innerHTML = `<label> <input id=${doc.id} class="with-gap" name="group1" type="radio" value="unsorted" checked /> <span>unsorted</span> </label>`;
     ul.appendChild(li);
-  } else {
-    li.innerHTML = `<label> <input id=${doc.id} class="with-gap" name="group1" type="radio" value=${doc.data().name}  /> <span>${doc.data().name}</span> </label>`;
+  } else if (doc.data().name !== "cached") {
+    li.innerHTML = `<label> <input id=${
+      doc.id
+    } class="with-gap" name="group1" type="radio" value=${
+      doc.data().name
+    }  /> <span>${doc.data().name}</span> </label>`;
     ul.appendChild(li);
   }
 }
@@ -96,7 +102,7 @@ chrome.tabs.query({ active: true, lastFocusedWindow: true }, async function (
   if (response) {
     document.getElementById("siteImg").src = response.url;
     document.getElementById("siteImg").addEventListener("error", () => {
-      document.getElementById("siteImg").src = "16x16.png";
+      document.getElementById("siteImg").src = "false.png";
     });
   }
 
@@ -111,12 +117,10 @@ chrome.tabs.query({ active: true, lastFocusedWindow: true }, async function (
       .get();
     if (doc.exists) {
       document.getElementById("createCategoryField").classList.add("hidden");
-      document
-        .getElementById("collections")
-        .classList.add("hidden");
+      document.getElementById("collections").classList.add("hidden");
       document.getElementById("saveBtn").classList.add("hidden");
       document.getElementById("notification").classList.add("show");
-      chrome.browserAction.setIcon({ path: "existed16x16.png" });
+      chrome.browserAction.setIcon({ path: "true.png" });
       chrome.browserAction.setPopup({ popup: "" });
     }
   });
@@ -142,7 +146,7 @@ extractTitle = (html) => {
 };
 
 document.getElementById("saveBtn").addEventListener("click", () => {
-  liIds.map(id => {
+  liIds.map((id) => {
     // console.log(id)
     const radioBtn = document.getElementById(id);
     if (radioBtn.checked) {
@@ -166,17 +170,25 @@ function addDocumentToFirestore(collectionName) {
       .then(function () {
         console.log("Document successfully written!");
         document.getElementById("createCategoryField").classList.add("hidden");
-        document
-          .getElementById("collections")
-          .classList.add("hidden");
+        document.getElementById("collections").classList.add("hidden");
         document.getElementById("saveBtn").classList.add("hidden");
         document.getElementById("spinner").classList.remove("show");
         document.getElementById("notification").classList.add("show");
-        chrome.browserAction.setIcon({ path: "existed16x16.png" });
+        chrome.browserAction.setIcon({ path: "true.png" });
         chrome.browserAction.setPopup({ popup: "" });
       })
       .catch(function (error) {
         console.error("Error writing document: ", error);
+      });
+
+    db.collection("cached")
+      .doc(CryptoJS.MD5(tab.url).toString())
+      .set({})
+      .then(function () {
+        console.log("Successfully written to cached");
+      })
+      .catch(function (error) {
+        console.error("Error writing cached: ", error);
       });
   });
 }
