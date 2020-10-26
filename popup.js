@@ -116,6 +116,8 @@ chrome.tabs.query({ active: true, lastFocusedWindow: true }, async function (
         .classList.add("hidden");
       document.getElementById("saveBtn").classList.add("hidden");
       document.getElementById("notification").classList.add("show");
+      chrome.browserAction.setIcon({ path: "existed16x16.png" });
+      chrome.browserAction.setPopup({ popup: "" });
     }
   });
 });
@@ -125,7 +127,6 @@ async function getTitle(url) {
   if (!validUrl) return undefined;
   const response = await fetch(`${url}`).catch((err) => console.log(err));
   const html = await response.text();
-  // console.log(html);
   const result = (() => {
     const doc = new DOMParser().parseFromString(html, "text/html");
     const title = doc.querySelectorAll("title")[0];

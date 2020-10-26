@@ -3,7 +3,7 @@
   "name": "Bookmarker",
   "version": "0.001",
   "permissions": [
-    "activeTab", "tabs"
+    "activeTab", "tabs", "webNavigation"
   ],
   "content_scripts": [
     {

@@ -35,20 +35,35 @@ chrome.tabs.onActivated.addListener((tab) => {
 }); //end
 
 chrome.tabs.onUpdated.addListener(async function (tabId, changeInfo, tab) {
-  chrome.browserAction.setIcon({ path: "16x16.png" });
-  chrome.browserAction.setPopup({ popup: "popup.html" });
-  if (changeInfo.url !== undefined) {
-    // alert(`onUpdated ${changeInfo.url}---- ${tab.url}`);
-    const snapshot = await db.collection("collections").get();
-    snapshot.docs.map(async (docOfCollections) => {
-      const doc = await db
-        .collection(docOfCollections.data().name)
-        .doc(CryptoJS.MD5(tab.url).toString())
-        .get();
-      if (doc.exists) {
-        chrome.browserAction.setIcon({ path: "existed16x16.png" });
-        chrome.browserAction.setPopup({ popup: "" });
-      }
-    });
+  // console.log(changeInfo);
+  // console.log(tab);
+  if (tab.status === "complete" && tab.url !== undefined) {
+    const urlExisted = await checkDocExisted(tab.url);
+    // console.log(urlExisted);
+    if (urlExisted) {
+      chrome.browserAction.setIcon({ path: "existed16x16.png" });
+      chrome.browserAction.setPopup({ popup: "" });
+    } else {
+      chrome.browserAction.setIcon({ path: "16x16.png" });
+      chrome.browserAction.setPopup({ popup: "popup.html" });
+    }
   }
 });
+
+async function checkDocExisted(url) {
+  const snapshot = await db.collection("collections").get();
+  const existedPromiseArr = snapshot.docs.map(
+    async (docOfCollections) => {
+      const doc = await db
+        .collection(docOfCollections.data().name)
+        .doc(CryptoJS.MD5(url).toString())
+        .get();
+      if (doc.exists) {
+        return true;
+      }
+    }
+  );
+
+  const existedArr = await Promise.all(existedPromiseArr);
+  return existedArr.find((item) => item === true);
+}
