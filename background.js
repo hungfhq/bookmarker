@@ -17,15 +17,7 @@ const db = firebase.firestore();
 
 chrome.tabs.onActivated.addListener((tab) => {
   chrome.tabs.get(tab.tabId, async (currentTab) => {
-    const urlExisted = await checkDocExisted(currentTab.url);
-    // console.log(urlExisted);
-    if (urlExisted) {
-      chrome.browserAction.setIcon({ path: "existed16x16.png" });
-      chrome.browserAction.setPopup({ popup: "" });
-    } else {
-      chrome.browserAction.setIcon({ path: "16x16.png" });
-      chrome.browserAction.setPopup({ popup: "popup.html" });
-    }
+    checkDocExisted(currentTab.url);
   });
 }); //end
 
@@ -33,15 +25,9 @@ chrome.tabs.onUpdated.addListener(async function (tabId, changeInfo, tab) {
   // console.log(changeInfo);
   // console.log(tab);
   if (tab.status === "complete" && tab.url !== undefined) {
-    const urlExisted = await checkDocExisted(tab.url);
+    checkDocExisted(tab.url);
     // console.log(urlExisted);
-    if (urlExisted) {
-      chrome.browserAction.setIcon({ path: "existed16x16.png" });
-      chrome.browserAction.setPopup({ popup: "" });
-    } else {
-      chrome.browserAction.setIcon({ path: "16x16.png" });
-      chrome.browserAction.setPopup({ popup: "popup.html" });
-    }
+    
   }
 });
 
@@ -60,5 +46,12 @@ async function checkDocExisted(url) {
   );
 
   const existedArr = await Promise.all(existedPromiseArr);
-  return existedArr.find((item) => item === true);
+  const urlExisted = existedArr.find((item) => item === true);
+  if (urlExisted) {
+    chrome.browserAction.setIcon({ path: "existed16x16.png" });
+    chrome.browserAction.setPopup({ popup: "" });
+  } else {
+    chrome.browserAction.setIcon({ path: "16x16.png" });
+    chrome.browserAction.setPopup({ popup: "popup.html" });
+  }
 }
