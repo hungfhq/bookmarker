@@ -16,21 +16,16 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 chrome.tabs.onActivated.addListener((tab) => {
-  chrome.browserAction.setIcon({ path: "16x16.png" });
-  chrome.browserAction.setPopup({ popup: "popup.html" });
-
   chrome.tabs.get(tab.tabId, async (currentTab) => {
-    const snapshot = await db.collection("collections").get();
-    snapshot.docs.map(async (docOfCollections) => {
-      const doc = await db
-        .collection(docOfCollections.data().name)
-        .doc(CryptoJS.MD5(currentTab.url).toString())
-        .get();
-      if (doc.exists) {
-        chrome.browserAction.setIcon({ path: "existed16x16.png" });
-        chrome.browserAction.setPopup({ popup: "" });
-      }
-    });
+    const urlExisted = await checkDocExisted(currentTab.url);
+    // console.log(urlExisted);
+    if (urlExisted) {
+      chrome.browserAction.setIcon({ path: "existed16x16.png" });
+      chrome.browserAction.setPopup({ popup: "" });
+    } else {
+      chrome.browserAction.setIcon({ path: "16x16.png" });
+      chrome.browserAction.setPopup({ popup: "popup.html" });
+    }
   });
 }); //end
 
