@@ -28,43 +28,47 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 });
 
 async function checkDocExisted(url) {
-  console.log(url);
-  let existed = false;
-  const urlExisted = await db
-    .collection("cached")
-    .doc(CryptoJS.MD5(url).toString())
-    .get();
-  if (urlExisted.exists) {
-    existed = true;
-  }
-  // if (!existed) {
-  //   const snapshot = await db.collection("collections").get();
-  //   const existedPromiseArr = snapshot.docs.map(
-  //     async (docOfCollections) => {
-  //       const doc = await db
-  //         .collection(docOfCollections.data().name)
-  //         .doc(CryptoJS.MD5(url).toString())
-  //         .get();
-  //       if (doc.exists) {
-  //         return true;
-  //       }
-  //     }
-  //   );
-  //   const existedArr = await Promise.all(existedPromiseArr);
-  //   urlExisted = existedArr.find((item) => item === true);
-  //   if (urlExisted) {
-  //     localStorage.setItem(CryptoJS.MD5(url), 'true');
-  //   } else {
-  //     localStorage.setItem(CryptoJS.MD5(url), 'false');
-  //   }
-  // }
+  let urlExisted = null;
+  let localExisted = null;
+  const urlKeyArr = [CryptoJS.MD5(url).toString()];
+  chrome.storage.local.get(urlKeyArr, async (data) => {
+    urlMD5 = Object.keys(data)[0];
+    localExisted = data[urlMD5];
+    if (localExisted !== null) {
+      urlExisted = localExisted;
+    } else {
+      const snapshot = await db.collection("collections").get();
+      const existedPromiseArr = snapshot.docs.map(
+        async (docOfCollections) => {
+          const doc = await db
+            .collection(docOfCollections.data().name)
+            .doc(CryptoJS.MD5(url).toString())
+            .get();
+          if (doc.exists) {
+            return true;
+          }
+        }
+      );
+      const existedArr = await Promise.all(existedPromiseArr);
+      urlExisted = existedArr.find((item) => item === true);
+      if (urlExisted) {
+        const storageObj = {};
+        storageObj[urlKey] = true;
+        chrome.storage.local.set(storageObj);
+      } else {
+        const storageObj = {};
+        storageObj[urlKey] = false;
+        chrome.storage.local.set(storageObj);
+      }
+    }
+  
+    if (urlExisted) {
+      chrome.browserAction.setIcon({ path: "true.png" });
+      chrome.browserAction.setPopup({ popup: "" });
+    } else {
+      chrome.browserAction.setIcon({ path: "false.png" });
+      chrome.browserAction.setPopup({ popup: "popup.html" });
+    }
+  });
 
-  console.log(urlExisted);
-  if (existed) {
-    chrome.browserAction.setIcon({ path: "true.png" });
-    chrome.browserAction.setPopup({ popup: "" });
-  } else {
-    chrome.browserAction.setIcon({ path: "false.png" });
-    chrome.browserAction.setPopup({ popup: "popup.html" });
-  }
 }

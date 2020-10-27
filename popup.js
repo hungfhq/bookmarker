@@ -19,7 +19,6 @@ async function loadAllCategories() {
   liIds = [];
   const ul = document.getElementById("collections");
   while ((lis = ul.getElementsByTagName("li")).length > 0) {
-    console.log(lis[0]);
     ul.removeChild(lis[0]);
   }
 
@@ -27,7 +26,6 @@ async function loadAllCategories() {
   snapshot.docs
     .filter((item) => item.data().name !== "cached")
     .map((doc) => {
-      // console.log(doc.id);
       liIds.push(doc.id);
       addChildToCategoryList(doc);
     });
@@ -71,7 +69,7 @@ function createCategory() {
         document.getElementById("createCategoryBtn").classList.remove("hidden");
         document.getElementById("spinnerSmall").classList.add("hidden");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
   }
 }
 
@@ -96,7 +94,7 @@ chrome.tabs.query({ active: true, lastFocusedWindow: true }, async function (
     .split(/[/?#]/)[0];
   const response = await fetch("https://" + website + "/favicon.ico").catch(
     function (error) {
-      console.log(error);
+      console.error(error);
     }
   );
   if (response) {
@@ -129,7 +127,7 @@ chrome.tabs.query({ active: true, lastFocusedWindow: true }, async function (
 async function getTitle(url) {
   const validUrl = /http/.test(url);
   if (!validUrl) return undefined;
-  const response = await fetch(`${url}`).catch((err) => console.log(err));
+  const response = await fetch(`${url}`).catch((err) => console.error(err));
   const html = await response.text();
   const result = (() => {
     const doc = new DOMParser().parseFromString(html, "text/html");
@@ -147,10 +145,8 @@ extractTitle = (html) => {
 
 document.getElementById("saveBtn").addEventListener("click", () => {
   liIds.map((id) => {
-    // console.log(id)
     const radioBtn = document.getElementById(id);
     if (radioBtn.checked) {
-      console.log(radioBtn.value);
       addDocumentToFirestore(radioBtn.value);
     }
   });
